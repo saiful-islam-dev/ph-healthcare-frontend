@@ -20,9 +20,10 @@ const HeroSection = () => {
         <Box
           sx={{
             position: "absolute",
-            width: "700px",
+            width: "690px",
             left: "-90px",
-            top: "-120px",
+            top: "-100px",
+            zIndex: -1,
           }}
         >
           <Image src={assets.svgs.grid} alt="doctor1" />
