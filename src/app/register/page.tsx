@@ -13,6 +13,11 @@ import assets from "@/assets";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { modifyPayload } from "@/utils/modifyPayload";
+import { registerPatient } from "@/services/actions/registerPatient";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { userLogin } from "@/services/actions/userLogin";
+import { storeUserInfo } from "@/services/auth.services";
 
 interface IPatientData {
   name: string;
@@ -26,6 +31,7 @@ interface IPatientRegisterFormData {
 }
 
 const Register = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -33,9 +39,29 @@ const Register = () => {
     formState: { errors },
   } = useForm<IPatientRegisterFormData>();
 
-  const onSubmit: SubmitHandler<IPatientRegisterFormData> = (values) => {
-    const data = modifyPayload(values);
-    console.log(data);
+  const onSubmit: SubmitHandler<IPatientRegisterFormData> = async (values) => {
+    const formData = modifyPayload(values);
+    try {
+      const res = await registerPatient(formData);
+      if (res?.data?.id) {
+        toast.success(res?.message);
+        router.push("/login");
+        const userInfo = {
+          password: values.password,
+          email: values.patient.email,
+          json: () => ({
+            password: values.password,
+            email: values.patient.email,
+          }),
+        };
+        const result = await userLogin(userInfo);
+        if (result?.data?.accessToken) {
+          storeUserInfo({ accessToken: result?.data?.accessToken });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

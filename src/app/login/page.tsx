@@ -1,3 +1,4 @@
+"use client";
 import {
   Container,
   Box,
@@ -12,8 +13,41 @@ import React from "react";
 import assets from "@/assets";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { userLogin } from "@/services/actions/userLogin";
+import { storeUserInfo } from "@/services/auth.services";
+
+export type FormValues = {
+  json(): unknown;
+  email: string;
+  password: string;
+};
 
 const Login = () => {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    console.log(values);
+    try {
+      const res = await userLogin(values);
+      console.log(res);
+      if (res?.data?.accessToken) {
+        toast.success(res?.message);
+        storeUserInfo({ accessToken: res?.data?.accessToken });
+        router.push("/");
+      }
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
+
   return (
     <Container>
       <Stack
@@ -50,44 +84,48 @@ const Login = () => {
           </Stack>
 
           <Box>
-            <Grid container spacing={2} my={1}>
-              <Grid item md={6}>
-                <TextField
-                  label="Email"
-                  type="email"
-                  variant="outlined"
-                  size="small"
-                  fullWidth={true}
-                />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Grid container spacing={2} my={1}>
+                <Grid item md={6}>
+                  <TextField
+                    label="Email"
+                    type="email"
+                    variant="outlined"
+                    size="small"
+                    fullWidth={true}
+                    {...register("email")}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    label="Password"
+                    type="password"
+                    variant="outlined"
+                    size="small"
+                    fullWidth={true}
+                    {...register("password")}
+                  />
+                </Grid>
               </Grid>
-              <Grid item md={6}>
-                <TextField
-                  label="Password"
-                  type="password"
-                  variant="outlined"
-                  size="small"
-                  fullWidth={true}
-                />
-              </Grid>
-            </Grid>
 
-            <Typography mb={1} textAlign="end" component="p" fontWeight={300}>
-              Forgot Password?
-            </Typography>
+              <Typography mb={1} textAlign="end" component="p" fontWeight={300}>
+                Forgot Password?
+              </Typography>
 
-            <Button
-              sx={{
-                margin: "10px 0px",
-              }}
-              fullWidth={true}
-              type="submit"
-            >
-              Login
-            </Button>
-            <Typography>
-              Don&apos;t have an account?{" "}
-              <Link href="/register">Create an account</Link>
-            </Typography>
+              <Button
+                sx={{
+                  margin: "10px 0px",
+                }}
+                fullWidth={true}
+                type="submit"
+              >
+                Login
+              </Button>
+              <Typography>
+                Don&apos;t have an account?{" "}
+                <Link href="/register">Create an account</Link>
+              </Typography>
+            </form>
           </Box>
         </Box>
       </Stack>

@@ -1,4 +1,5 @@
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import AuthButton from "@/components/UI/AuthButton";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 
 const Navbar = () => {
@@ -28,9 +29,7 @@ const Navbar = () => {
           <Typography>NGOs</Typography>
         </Stack>
 
-        <Button component={Link} href="/login">
-          Login
-        </Button>
+        <AuthButton />
       </Stack>
     </Container>
   );
