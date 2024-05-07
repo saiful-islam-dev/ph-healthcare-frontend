@@ -20,7 +20,7 @@ import { storeUserInfo } from "@/services/auth.services";
 import PHForm from "@/components/Forms/PHForm";
 import PHInput from "@/components/Forms/PHInput";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {z} from "zod";
+import { z } from "zod";
 
 export const validationSchema = z.object({
   email: z.string().email("Please enter a valid email address!"),
@@ -39,7 +39,7 @@ const Login = () => {
       if (res?.data?.accessToken) {
         toast.success(res?.message);
         storeUserInfo({ accessToken: res?.data?.accessToken });
-        router.push("/");
+        router.push("/dashboard");
       } else {
         setError(res.message);
       }
