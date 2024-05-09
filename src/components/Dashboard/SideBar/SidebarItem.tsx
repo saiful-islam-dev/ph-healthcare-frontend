@@ -13,11 +13,8 @@ type IProps = {
 };
 
 const SidebarItem = ({ item }: IProps) => {
-  console.log(item);
   const linkPath = `/dashboard/${item.path}`;
   const pathname = usePathname();
-  console.log(pathname);
-  console.log(linkPath);
 
   return (
     <Link href={linkPath}>
