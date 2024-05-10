@@ -19,7 +19,6 @@ export interface DrawerItem {
   child?: DrawerItem[];
 }
 
-
 export type ResponseSuccessType = {
   data: any;
   meta?: IMeta;
@@ -36,3 +35,4 @@ export type IGenericErrorMessage = {
   message: string;
 };
 
+export const Gender = ["MALE", "FEMALE"];

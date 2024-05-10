@@ -14,13 +14,12 @@ type TProps = {
 };
 
 const SpecialtyModal = ({ open, setOpen }: TProps) => {
-    const [createSpecialty] = useCreateSpecialtyMutation();
+  const [createSpecialty] = useCreateSpecialtyMutation();
 
   const handleFormSubmit = async (values: FieldValues) => {
     const data = modifyPayload(values);
     try {
       const res = await createSpecialty(data).unwrap();
-      console.log(res);
       if (res?.id) {
         toast.success("Specialty created successfully!!");
         setOpen(false);

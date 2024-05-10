@@ -51,12 +51,10 @@ const Register = () => {
   const router = useRouter();
 
   const handleRegister = async (values: FieldValues) => {
-    console.log(values);
     const data = modifyPayload(values);
-    console.log(data);
+    
     try {
       const res = await registerPatient(data);
-      console.log(res);
       if (res?.data?.id) {
         toast.success(res?.message);
         const result = await userLogin({

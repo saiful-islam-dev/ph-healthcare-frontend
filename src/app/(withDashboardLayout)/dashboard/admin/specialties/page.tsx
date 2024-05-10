@@ -16,6 +16,10 @@ const SpecialtiesPage = () => {
   const { data, isLoading } = useGetAllSpecialtiesQuery({});
   const [deleteSpecialty] = useDeleteSpecialtiesMutation();
 
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
+  console.log(data);
   const handleDelete = async (id: string) => {
     try {
       const res = await deleteSpecialty(id).unwrap();
@@ -27,7 +31,6 @@ const SpecialtiesPage = () => {
     }
   };
 
-  console.log(data);
   const columns: GridColDef[] = [
     { field: "title", headerName: "Title", width: 400 },
     {
@@ -35,10 +38,9 @@ const SpecialtiesPage = () => {
       headerName: "Icon",
       flex: 1,
       renderCell: ({ row }) => {
-        console.log(row);
         return (
           <Box>
-            {/* <Image src={row?.icon} width={30} height={30} alt="icon" /> */}
+            <Image src={row?.icon} width={30} height={30} alt="icon" />
           </Box>
         );
       },

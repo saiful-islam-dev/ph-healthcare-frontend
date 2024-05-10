@@ -1,22 +1,12 @@
-"use client";
 import * as React from "react";
-import { SxProps, styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import { DialogContent, DialogTitle, SxProps } from "@mui/material";
+import { BootstrapDialog } from "./PhModal";
 
-export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-}));
-
-type TProps = {
+type TModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
@@ -24,22 +14,35 @@ type TProps = {
   sx?: SxProps;
 };
 
-export default function PhModal({
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function PHFullScreenModal({
   open = false,
   setOpen,
   title = "",
   children,
   sx,
-}: TProps) {
+}: TModalProps) {
   const handleClose = () => {
     setOpen(false);
   };
+
   return (
     <React.Fragment>
       <BootstrapDialog
+        fullScreen
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
+        sx={{ ...sx }}
+        TransitionComponent={Transition}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
           {title}
@@ -56,7 +59,7 @@ export default function PhModal({
         >
           <CloseIcon />
         </IconButton>
-        <DialogContent dividers>{children}</DialogContent>
+        <DialogContent>{children}</DialogContent>
       </BootstrapDialog>
     </React.Fragment>
   );
