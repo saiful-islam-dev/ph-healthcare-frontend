@@ -1,5 +1,5 @@
 import * as React from "react";
-import PHFullScreenModal from "@/components/Shared/PhModal/PHFullScreenModal";
+import PHFullScreenModal from "@/components/Shared/PHModal/PHFullScreenModal";
 import PHForm from "@/components/Forms/PHForm";
 import { Button, Grid } from "@mui/material";
 import PHInput from "@/components/Forms/PHInput";

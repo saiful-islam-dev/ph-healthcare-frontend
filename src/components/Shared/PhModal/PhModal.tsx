@@ -24,7 +24,7 @@ type TProps = {
   sx?: SxProps;
 };
 
-export default function PhModal({
+export default function PHModal({
   open = false,
   setOpen,
   title = "",
