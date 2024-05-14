@@ -7,6 +7,8 @@ import { useDebounced } from "@/redux/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDeleteDoctorMutation } from "../../../../../redux/api/doctorApi";
+import EditIcon from "@mui/icons-material/Edit";
+import Link from "next/link";
 
 const DoctorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -23,7 +25,7 @@ const DoctorsPage = () => {
   }
 
   const { data, isLoading } = useGetAllDoctorsQuery({ ...query });
-  const [deleteDoctor] = useDeleteDoctorMutation(); 
+  const [deleteDoctor] = useDeleteDoctorMutation();
   const doctor = data?.doctor;
   const meta = data?.meta;
 
@@ -53,9 +55,19 @@ const DoctorsPage = () => {
       align: "center",
       renderCell: ({ row }) => {
         return (
-          <IconButton onClick={() => handleDelete(row.id)} aria-label="delete">
-            <GridDeleteIcon />
-          </IconButton>
+          <Box>
+            <IconButton
+              onClick={() => handleDelete(row.id)}
+              aria-label="delete"
+            >
+              <GridDeleteIcon sx={{ color: "red" }} />
+            </IconButton>
+            <Link href={`/dashboard/admin/doctors/edit/${row.id}`}>
+              <IconButton aria-label="delete">
+                <EditIcon />
+              </IconButton>
+            </Link>
+          </Box>
         );
       },
     },
