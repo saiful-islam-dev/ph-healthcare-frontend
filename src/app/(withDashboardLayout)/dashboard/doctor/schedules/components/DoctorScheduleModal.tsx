@@ -6,6 +6,9 @@ import PHModal from "@/components/Shared/PHModal/PHModal";
 import { useState } from "react";
 import { useGetAllSchedulesQuery } from "@/redux/api/scheduleApi";
 import MultipleSelectFieldChip from "./MultipleSelectFieldChip";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useCreateDoctorScheduleMutation } from "@/redux/api/doctorScheduleApi";
+import { Stack } from "@mui/material";
 
 type TProps = {
   open: boolean;
@@ -34,28 +37,57 @@ const DoctorScheduleModal = ({ open, setOpen }: TProps) => {
       .toISOString();
   }
 
-  const { data, isLoading } = useGetAllSchedulesQuery(query);
+  const { data } = useGetAllSchedulesQuery(query);
   const schedules = data?.schedules;
   console.log(data);
   console.log(schedules);
 
+  const [createDoctorSchedule, { isLoading }] =
+    useCreateDoctorScheduleMutation();
+
+  console.log(selectedScheduleIds);
+
+  const onSubmit = async () => {
+    try {
+      const res = await createDoctorSchedule({
+        scheduleIds: selectedScheduleIds,
+      });
+      console.log(res);
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <PHModal open={open} setOpen={setOpen} title="Create Doctor Schedule">
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker
-          label="Controlled picker"
-          value={dayjs(selectedDate)}
-          onChange={(newValue) =>
-            setSelectedDate(dayjs(newValue).toISOString())
-          }
-          sx={{ width: "100%" }}
+      <Stack direction={"column"} gap={2}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Controlled picker"
+            value={dayjs(selectedDate)}
+            onChange={(newValue) =>
+              setSelectedDate(dayjs(newValue).toISOString())
+            }
+            sx={{ width: "100%" }}
+          />
+        </LocalizationProvider>
+        <MultipleSelectFieldChip
+          schedules={schedules}
+          selectedScheduleIds={selectedScheduleIds}
+          setSelectedScheduleIds={setSelectedScheduleIds}
         />
-      </LocalizationProvider>
-      <MultipleSelectFieldChip
-        schedules={schedules}
-        selectedScheduleIds={selectedScheduleIds}
-        setSelectedScheduleIds={setSelectedScheduleIds}
-      />
+
+        <LoadingButton
+          size="small"
+          onClick={onSubmit}
+          loading={isLoading}
+          loadingIndicator="Submitting..."
+          variant="contained"
+        >
+          <span>Submit</span>
+        </LoadingButton>
+      </Stack>
     </PHModal>
   );
 };
