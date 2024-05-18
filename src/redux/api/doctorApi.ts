@@ -39,20 +39,22 @@ export const doctorApi = baseApi.injectEndpoints({
     }),
 
     getDoctor: build.query({
-      query: (id: string | string[] | undefined) => ({
-        url: `/doctor/${id}`,
-        method: "GET",
-      }),
+      query: (id: string | string[] | undefined) => {
+        return {
+          url: `/doctor/${id}`,
+          method: "GET",
+        };
+      },
       providesTags: [tagTypes.doctor],
     }),
 
     updateDoctor: build.mutation({
       query: (data) => ({
         url: `/doctor/${data.id}`,
-        method: "POST",
+        method: "PATCH",
         data: data.body,
       }),
-      invalidatesTags: [tagTypes.doctor],
+      invalidatesTags: [tagTypes.doctor, tagTypes.user],
     }),
   }),
 });

@@ -11,7 +11,6 @@ export type IMeta = {
 export type UserRole = keyof typeof USER_ROLE;
 
 export interface DrawerItem {
-  role: any;
   title: string;
   path: string;
   parentPath?: string;
