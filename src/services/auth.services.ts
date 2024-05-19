@@ -1,4 +1,4 @@
-import { authKey } from "@/contants/authKey";
+import { authKey } from "@/contacts/authKey";
 import { instance as axiosInstance } from "@/helpers/axios/axiosInstance";
 import { decodedToken } from "@/utils/jwt";
 

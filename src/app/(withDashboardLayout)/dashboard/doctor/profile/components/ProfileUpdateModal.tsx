@@ -9,7 +9,7 @@ import {
 } from "@/redux/api/doctorApi";
 import { Gender } from "@/types";
 import { Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import MultipleSelectChip from "./MultipleSelectChip";
 import { useGetAllSpecialtiesQuery } from "@/redux/api/specialtiesApi";
@@ -41,11 +41,20 @@ const validationSchema = z.object({
 });
 
 const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
-  const { data: doctorData, isLoading } = useGetDoctorQuery(id);
+  const { data: doctorData, refetch, isSuccess } = useGetDoctorQuery(id);
   const { data: allSpecialties } = useGetAllSpecialtiesQuery(undefined);
   const [selectedSpecialtiesIds, setSelectedSpecialtiesIds] = useState([]);
 
   const [updateDoctor, { isLoading: updating }] = useUpdateDoctorMutation();
+  useEffect(() => {
+    if (!isSuccess) return;
+
+    setSelectedSpecialtiesIds(
+      doctorData?.doctorSpecialties.map((sp: any) => {
+        return sp.specialtiesId;
+      })
+    );
+  }, [isSuccess]);
 
   const submitHandler = async (values: FieldValues) => {
     const specialties = selectedSpecialtiesIds?.map((specialtiesId: any) => ({
@@ -81,7 +90,7 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
 
     try {
       updateDoctor({ body: updatedValues, id });
-
+      await refetch();
       setOpen(false);
     } catch (error) {
       console.log(error);
@@ -95,7 +104,7 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
         defaultValues={doctorData}
         resolver={zodResolver(validationSchema)}
       >
-        <Grid container spacing={2} my={2}>
+        <Grid container spacing={2} sx={{ my: 5 }}>
           <Grid item xs={12} sm={12} md={4}>
             <PHInput name="name" label="Name" sx={{ mb: 2 }} fullWidth />
           </Grid>
@@ -186,11 +195,11 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               setSelectedIds={setSelectedSpecialtiesIds}
             />
           </Grid>
-
-          <Button type="submit" disabled={updating}>
-            Save
-          </Button>
         </Grid>
+
+        <Button type="submit" disabled={updating}>
+          Save
+        </Button>
       </PHForm>
     </PHFullScreenModal>
   );

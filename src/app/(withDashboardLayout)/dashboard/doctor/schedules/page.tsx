@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, IconButton } from "@mui/material";
+import { Box, Button, IconButton, Pagination } from "@mui/material";
 import DoctorScheduleModal from "./components/DoctorScheduleModal";
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -12,14 +12,31 @@ import { useGetAllDoctorSchedulesQuery } from "@/redux/api/doctorScheduleApi";
 const DoctorSchedulesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  const [page, setPage] = useState(1);
+  const [limit, serLimit] = useState(2);
+
+  const query: Record<string, any> = {};
+
+  query["page"] = page;
+  query["limit"] = limit;
+
   const [allSchedule, setAllSchedule] = useState<any>([]);
-  const { data, isLoading } = useGetAllDoctorSchedulesQuery({});
+  const { data, isLoading } = useGetAllDoctorSchedulesQuery({ ...query });
   console.log(data);
 
   const schedules = data?.doctorSchedules;
   const meta = data?.meta;
 
   console.log(schedules);
+
+  let pageCount: number;
+  if (meta?.total) {
+    pageCount = Math.ceil(meta?.total / limit);
+  }
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   useEffect(() => {
     const updateData = schedules?.map((schedule: ISchedule, index: number) => {
@@ -67,7 +84,31 @@ const DoctorSchedulesPage = () => {
       <Box>
         {!isLoading ? (
           <Box my={2}>
-            <DataGrid rows={allSchedule ?? []} columns={columns} />
+            <DataGrid
+              rows={allSchedule ?? []}
+              columns={columns}
+              hideFooterPagination
+              slots={{
+                footer: () => {
+                  return (
+                    <Box
+                      sx={{
+                        mb: 2,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Pagination
+                        color="primary"
+                        count={pageCount}
+                        page={page}
+                        onChange={handleChange}
+                      />
+                    </Box>
+                  );
+                },
+              }}
+            />
           </Box>
         ) : (
           <h1>Loading.....</h1>

@@ -1,4 +1,4 @@
-import { USER_ROLE } from "@/contants/role";
+import { USER_ROLE } from "@/contacts/role";
 import { DrawerItem, UserRole } from "@/types";
 
 //icons
