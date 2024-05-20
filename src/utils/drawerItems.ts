@@ -9,6 +9,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ReviewsIcon from "@mui/icons-material/Reviews";
 import TryIcon from "@mui/icons-material/Try";
 import PersonIcon from "@mui/icons-material/Person";
+import KeyIcon from "@mui/icons-material/Key";
 
 export const drawerItems = (role: UserRole) => {
   const roleMenus: DrawerItem[] = [];
@@ -18,6 +19,11 @@ export const drawerItems = (role: UserRole) => {
       title: "Profile",
       path: `${role}/profile`,
       icon: PersonIcon,
+    },
+    {
+      title: "Change Password",
+      path: `change-password`,
+      icon: KeyIcon,
     },
   ];
 

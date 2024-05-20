@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+type Role = keyof typeof roleBasedPrivateRoutes;
+
 const AuthRoutes = ["/login", "/register"];
 const commonPrivateRoutes = ["/dashboard", "/dashboard/change-password"];
 const roleBasedPrivateRoutes = {
@@ -18,7 +20,11 @@ export function middleware(request: NextRequest) {
   const accessToken = cookies().get("accessToken")?.value;
 
   if (!accessToken) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    if (AuthRoutes.includes(pathname)) {
+      return NextResponse.next();
+    } else {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
   if (accessToken && commonPrivateRoutes.includes(pathname)) {
@@ -41,14 +47,16 @@ export function middleware(request: NextRequest) {
   //     return NextResponse.next();
   //   }
 
-  // code start here
-  if (role) {
-    console.log(role);
+  if (role && roleBasedPrivateRoutes[role as Role]) {
+    const routes = roleBasedPrivateRoutes[role as Role];
+    if (routes.some((route) => pathname.match(route))) {
+      return NextResponse.next();
+    }
   }
 
   return NextResponse.redirect(new URL("/", request.url));
 }
 
 export const config = {
-  matcher: "/dashboard/:page*",
+  matcher: ["/login", "/register", "/dashboard/:page*"],
 };
